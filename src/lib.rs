@@ -1,6 +1,6 @@
 pub struct EFM {
     decode_mappings: [u16; 0x4000],
-    encode_mappings: [u16; 0x4000],
+    encode_mappings: [u16; 256],
 }
 
 static EFM_TABLE_RAW: [u16; 256] = [
@@ -268,7 +268,7 @@ const START_PT: usize = 112 - QUATTUORDECUPLE_SIZE;
 impl EFM {
     pub fn new() -> Self {
         let mut decode_mappings: [u16; 0x4000] = [0xFFFF; 0x4000];
-        let mut encode_mappings: [u16; 0x4000] = [0xFFFF; 0x4000];
+        let mut encode_mappings: [u16; 256] = [0xFFFF; 256];
 
         for (decoded, &encoded) in EFM_TABLE_RAW.iter().enumerate() {
             decode_mappings[encoded as usize] = decoded as u16;
@@ -318,17 +318,16 @@ impl EFM {
     fn decode_quattuordecuple(&self, encoded_value: u128) -> Option<Vec<u8>> {
         let mut result: Vec<u8> = Vec::with_capacity(4); // Pre-allocate exact capacity
 
-        // Process 8 quintuples (40 bits total)
         for j in 0..8 {
-            let decoded_byte_a = self.decode_mappings
+            let decoded = self.decode_mappings
                 [((encoded_value >> START_PT - j * QUATTUORDECUPLE_SIZE) & 0x3fff) as usize];
 
             // Skip invalid encodings
-            if decoded_byte_a == 0xFFFF {
+            if decoded == 0xFFFF {
                 return None;
             }
 
-            result.push((decoded_byte_a & 0xFF) as u8);
+            result.push((decoded & 0xFF) as u8);
         }
         Some(result)
     }
@@ -432,7 +431,7 @@ impl EFM {
         let mut acc: u128 = 0;
 
         for i in 0..8 {
-            let shift_amount_high = START_PT - (i * (QUATTUORDECUPLE_SIZE));
+            let shift_amount_high = START_PT - i * QUATTUORDECUPLE_SIZE;
             acc |= (self.encode_mappings[decoded_value[i] as usize] as u128) << shift_amount_high;
         }
         acc
