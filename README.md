@@ -158,7 +158,15 @@ This project follows semantic versioning where feasible. Prior to 1.0.0, minor v
 
 ## License
 
-The repository does not currently declare a license. If you plan to use this in a project that requires explicit licensing, consider adding a `LICENSE` file and a `license` or `license-file` field in `Cargo.toml`.
+This project is dual-licensed under either of:
+- Apache License, Version 2.0
+- MIT license
+
+at your option.
+
+The license information is declared in `Cargo.toml` as `MIT OR Apache-2.0`. If you need the full texts, you can add `LICENSE-MIT` and `LICENSE-APACHE` files to the repository or refer to the standard license texts:
+- MIT: https://opensource.org/license/mit/
+- Apache-2.0: https://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Contributing
